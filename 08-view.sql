@@ -31,3 +31,21 @@ select employee_name, sum(payment_amount)
 from the_best_employee1
 group by employee_name
 order by sum(payment_amount) desc; 
+
+
+
+-- (3) Создали view, в котором написаны адреса кафе и стоимости заказов, сделанных в них
+create or replace view the_best_cafe as 
+select cafe_address, payment_amount
+from cafe
+join employee e using(cafe_id)
+join shawarma.order using(employee_id);
+
+--Вновь посмотрели, что получилось
+select * from the_best_cafe;
+
+--Отсортируем кафе от самого прибыльного до самого НЕприбыльного
+select cafe_address, sum(payment_amount)
+from the_best_cafe
+group by cafe_address
+order by sum(payment_amount) desc; 
