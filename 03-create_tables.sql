@@ -90,8 +90,7 @@ CREATE TABLE shawarma.product_x_dish
     product_id INT,
     dish_id    INT,
     CONSTRAINT product_x_dish_primary_key PRIMARY KEY (product_id, dish_id),
-    CONSTRAINT product_x_dish_product FOREIGN KEY (product_id) REFERENCES shawarma.product (product_id),
-    CONSTRAINT product_x_dish_dish FOREIGN KEY (dish_id) REFERENCES shawarma.dish (dish_id)
+    CONSTRAINT product_x_dish_product FOREIGN KEY (product_id) REFERENCES shawarma.product (product_id)
 );
 
 
