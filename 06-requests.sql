@@ -27,8 +27,13 @@ rank() over (partition by dish_name order by dish_price desc)
 from shawarma.dish;
 
 -- calculate the revenue for each cafe, taking into account discounts
-select cafe_address, sum(payment_amount - discount_amount) as revenue
-from (select cafe_address, employee_id from shawarma.cafe
-join shawarma.employee on cafe.cafe_id = employee.cafe_id) as cafe_employee
-join shawarma.order on shawarma.order.employee_id = cafe_employee.employee_id
+select cafe_address, sum(revenue)
+from (select cafe_id, (order_sum - discount_amount) as revenue from
+(select o.order_id, employee_id, sum(dish_price) as order_sum, discount_amount from
+(select order_id, dish_price from shawarma.dish
+join shawarma.dish_x_order on dish.dish_entry_id = dish_x_order.dish_entry_id) as od_dish
+join shawarma.order as o on o.order_id = od_dish.order_id
+group by o.order_id) as order_dish
+join shawarma.employee on employee.employee_id = order_dish.employee_id) as employee_dish
+join shawarma.cafe on cafe.cafe_id = employee_dish.cafe_id
 group by cafe_address;
