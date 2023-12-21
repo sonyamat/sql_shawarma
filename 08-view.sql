@@ -3,7 +3,7 @@ create or replace view dish_price_view as
 select dish_entry_id, dish_name, dish_price, order_id
 from dish
 join dish_x_order using(dish_entry_id)
-where valid_to_dttm = '9999-12-31 23:59:59.000'\
+where valid_to_dttm = '9999-12-31 23:59:59.000';
   
 --Посмотрели, что мы создали
 select * from dish_price_view;
