@@ -24,7 +24,7 @@ CREATE TABLE shawarma.employee
     cafe_id               INT          NOT NULL,
     employee_name         VARCHAR(100) NOT NULL,
     employee_phone_number VARCHAR(16),
-    employee_position     VARCHAR(10),
+    employee_position     VARCHAR(100),
     salary                NUMERIC,
     CONSTRAINT employee_id PRIMARY KEY (employee_id),
     CONSTRAINT employee_cafe_id FOREIGN KEY (cafe_id) REFERENCES shawarma.cafe (cafe_id),
