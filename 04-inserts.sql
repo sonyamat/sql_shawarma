@@ -23,12 +23,12 @@ values (1001, 1, 'Том Круз', '+7 904 170-21-20', 'Кассир', 20000.00
        (1015, 5, 'Ананух Гелишвили', '+7 100 100-01-11', 'Официант', 50000.00);
 
 
-insert into shawarma.order(order_id, employee_id, order_dttm, payment_amount, payment_type, discount_amount)
-values (5006, 1002, '2001-09-11 19:13:58', 499, 'bank card', 0),
-       (5002, 1007, '2015-10-11 04:23:24', 425, 'cash', 24),
-       (5003, 1015, '2015-11-11 14:57:45', 1470, 'cash', 370),
-       (5004, 1004, '2016-09-06 19:09:02', 300, 'bank card', 0),
-       (5005, 1009, '2017-06-08 15:12:03', 450, 'bank card', 50);
+insert into shawarma.order(order_id, employee_id, order_dttm, payment_type, discount_amount)
+values (5006, 1002, '2001-09-11 19:13:58', 'bank card', 0),
+       (5002, 1007, '2015-10-11 04:23:24', 'cash', 24),
+       (5003, 1015, '2015-11-11 14:57:45', 'cash', 370),
+       (5004, 1004, '2016-09-06 19:09:02', 'bank card', 0),
+       (5005, 1009, '2017-06-08 15:12:03', 'bank card', 50);
 
 
 insert into shawarma.delivery (delivery_id, cafe_id, delivery_dttm)

@@ -101,12 +101,10 @@ CREATE TABLE shawarma.order
     order_id        INT,
     employee_id     INT       NOT NULL,
     order_dttm      TIMESTAMP NOT NULL,
-    payment_amount  NUMERIC   NOT NULL,
     payment_type    VARCHAR(10),
     discount_amount NUMERIC,
     CONSTRAINT order_id PRIMARY KEY (order_id),
     CONSTRAINT order_employee_id FOREIGN KEY (employee_id) REFERENCES shawarma.employee (employee_id),
-    CONSTRAINT payment_amount CHECK (payment_amount > 0 IS NOT NULL),
     CONSTRAINT payment_type CHECK (regexp_match(payment_type,
                                                 '^(cash|bank card)$') IS NOT NULL)
 );
