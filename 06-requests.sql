@@ -21,10 +21,10 @@ join shawarma.delivery on product_delivery.delivery_id = delivery.delivery_id
 where product_name = 'Сыр'
 order by delivery_dttm;
 
--- print salaries ratings for each employee position
-select employee_position, employee_name, salary,
-rank() over (partition by employee_position order by salary desc)
-from shawarma.employee;
+-- print dish prices ratings for each dish
+select dish_name, valid_from_dttm, valid_to_dttm, dish_price,
+rank() over (partition by dish_name order by dish_price desc)
+from shawarma.dish;
 
 -- calculate the revenue for each cafe, taking into account discounts
 select cafe_address, sum(payment_amount - discount_amount) as revenue
