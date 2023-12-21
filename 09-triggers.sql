@@ -68,3 +68,90 @@ insert into shawarma.dish(dish_id, dish_name, dish_price, valid_from_dttm, valid
 values (10000006, 'Шаверма с рыбой фугу', 1000, '2023-07-07 00:00:00', '9999-12-31 23:59:59');
   
 select * from dish;
+
+
+--Второй триггер будет для таблицы Сотрудник. Если ему меняют должность, его зарплата будет 
+--автоматически меняться в соответствии с ней.
+
+-- create table employee
+DROP TABLE IF EXISTS shawarma.employee CASCADE;
+CREATE TABLE shawarma.employee
+(
+    employee_id           INT,
+    cafe_id               INT          NOT NULL,
+    employee_name         VARCHAR(100) NOT NULL,
+    employee_phone_number VARCHAR(16),
+    employee_position     VARCHAR(100),
+    salary                NUMERIC,
+    CONSTRAINT employee_id PRIMARY KEY (employee_id),
+    CONSTRAINT employee_cafe_id FOREIGN KEY (cafe_id) REFERENCES shawarma.cafe (cafe_id),
+    CONSTRAINT employee_phone_number CHECK (regexp_match(employee_phone_number,
+                                                         '^(8|\+7)\s[0-9]{3}\s[0-9]{3}-[0-9]{2}-[0-9]{2}$') IS NOT NULL),
+    CONSTRAINT employee_position CHECK (regexp_match(employee_position,
+                                                     '^(Линейный повар|Повар заготовщик|Су-шеф|Шеф|Бренд-шеф|Шеф-кондитер|Официант|Уборщик|Кассир)$') IS NOT NULL),
+    CONSTRAINT salary CHECK (salary > 0 IS NOT NULL)
+);
+
+insert into shawarma.employee(employee_id, cafe_id, employee_name, employee_phone_number, employee_position, salary)
+values (1001, 1, 'Том Круз', '+7 904 170-21-20', 'Кассир', 20000.00),
+       (1002, 1, 'Дженнифер Коннелли', '+7 904 987-11-82', 'Линейный повар', 53500.00),
+       (1003, 1, 'Эдвард Нортон', '+7 898 316-51-08', 'Повар заготовщик', 42800.00),
+       (1004, 2, 'Джон Траволта', '+7 956 123-45-67', 'Официант', 50000.00),
+       (1005, 2, 'Ума Турман', '+7 957 321-54-76', 'Шеф-кондитер', 100000.00),
+       (1006, 2, 'Сергей Бурунов', '8 904 525-45-23', 'Уборщик', 10000.00),
+       (1007, 3, 'Алла Пугачева', '+7 942 242-21-42', 'Кассир', 20000.00),
+       (1008, 3, 'Борис Джонсон', '+7 942 214-56-86', 'Уборщик', 10000.00),
+       (1009, 3, 'Леонардо Ди Каприо', '8 924 124-12-52', 'Официант', 50000.00),
+       (1010, 4, 'Илон Маск', '+7 321 424-32-53', 'Кассир', 20000.00),
+       (1011, 4, 'Стив Джобс', '8 904 123-21-32', 'Бренд-шеф', 150000.00),
+       (1012, 4, 'Дженнифер Лопес', '+7 412 424-42-65', 'Уборщик', 10000.00),
+       (1013, 5, 'Александр Халяпов', '8 909 312-32-53', 'Шеф', 9999999.99),
+       (1014, 5, 'Александр Пушкин', '8 903 123-53-32', 'Су-шеф', 200000.00),
+       (1015, 5, 'Ананух Гелишвили', '+7 100 100-01-11', 'Официант', 50000.00);
+
+select * from employee e;
+
+CREATE OR REPLACE FUNCTION trigger_change_position()
+    RETURNS TRIGGER
+    AS
+$$
+	DECLARE new_salary numeric := 1;
+    BEGIN
+	    case
+	    when NEW.employee_position = 'Кассир' then new_salary := 20000.00;
+	   	when NEW.employee_position = 'Уборщик' then new_salary := 10000.00;
+	    when NEW.employee_position = 'Официант' then new_salary := 50000.00;
+	    when NEW.employee_position = 'Шеф-кондитер' then new_salary := 100000.00;
+	    when NEW.employee_position = 'Бренд-шеф' then new_salary := 150000.00;
+	   	when NEW.employee_position = 'Шеф' then new_salary := 9999999.99;
+	  	when NEW.employee_position = 'Су-шеф' then new_salary := 200000.00;
+	 	when NEW.employee_position = 'Повар заготовщик' then new_salary := 42800.00;
+	 	when NEW.employee_position = 'Линейный повар' then new_salary := 53500.00;
+	    else RAISE EXCEPTION 'Такой должности еще нет в базе';
+	    end case;
+        UPDATE shawarma.employee
+        SET salary = new_salary         
+        WHERE employee_id = NEW.employee_id;
+        RETURN NEW;
+    END;
+$$  LANGUAGE plpgsql;
+
+CREATE or replace TRIGGER trigger_position_update
+   AFTER update of employee_position
+   ON shawarma.employee
+   FOR EACH ROW
+   EXECUTE PROCEDURE trigger_change_position();
+
+--Примеры исполнения: изначально Александр шеф повар с зарплатой 99999.99. 
+--После смен должности его зарплата заменится на 20000, 10000 и 200000.
+update shawarma.employee
+set employee_position = 'Кассир'
+where employee_name = 'Александр Халяпов';
+update shawarma.employee
+set employee_position = 'Уборщик'
+where employee_name = 'Александр Халяпов';
+update shawarma.employee
+set employee_position = 'Су-шеф'
+where employee_name = 'Александр Халяпов';
+
+select * from employee e;
