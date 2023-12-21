@@ -36,7 +36,6 @@ CREATE TABLE shawarma.employee
 );
 
 
-
 -- create table product
 DROP TABLE IF EXISTS shawarma.product CASCADE;
 CREATE TABLE shawarma.product
@@ -45,7 +44,6 @@ CREATE TABLE shawarma.product
     product_name VARCHAR(100) NOT NULL,
     CONSTRAINT product_id PRIMARY KEY (product_id)
 );
-
 
 
 -- create table delivery
@@ -74,12 +72,14 @@ CREATE TABLE shawarma.product_x_delivery
 DROP TABLE IF EXISTS shawarma.dish CASCADE;
 CREATE TABLE shawarma.dish
 (
-    dish_id         INT,
+    dish_entry_id   SERIAL,
+    dish_id         INT          NOT NULL,
     dish_name       VARCHAR(100) NOT NULL,
     dish_price      NUMERIC,
     valid_from_dttm TIMESTAMP    NOT NULL,
     valid_to_dttm   TIMESTAMP    NOT NULL,
-    CONSTRAINT dish_primary_key PRIMARY KEY (dish_id, valid_from_dttm),
+    CONSTRAINT dish_primary_key PRIMARY KEY (dish_entry_id),
+    CONSTRAINT dish_id_and_dttm UNIQUE (dish_id, valid_from_dttm),
     CONSTRAINT dish_price CHECK (dish.dish_price > 0 IS NOT NULL)
 );
 
@@ -87,9 +87,9 @@ CREATE TABLE shawarma.dish
 DROP TABLE IF EXISTS shawarma.product_x_dish CASCADE;
 CREATE TABLE shawarma.product_x_dish
 (
-    product_id INT,
-    dish_id    INT,
-    CONSTRAINT product_x_dish_primary_key PRIMARY KEY (product_id, dish_id),
+    product_id    INT,
+    dish_entry_id INT,
+    CONSTRAINT product_x_dish_primary_key PRIMARY KEY (product_id, dish_entry_id),
     CONSTRAINT product_x_dish_product FOREIGN KEY (product_id) REFERENCES shawarma.product (product_id)
 );
 
@@ -115,9 +115,9 @@ CREATE TABLE shawarma.order
 DROP TABLE IF EXISTS shawarma.dish_x_order CASCADE;
 CREATE TABLE shawarma.dish_x_order
 (
-    dish_id  INT,
-    order_id INT,
-    CONSTRAINT dish_x_order_primary_key PRIMARY KEY (order_id, dish_id),
-    CONSTRAINT dish_x_order_dish FOREIGN KEY (dish_id) REFERENCES shawarma.dish (dish_id),
-    CONSTRAINT dish_x_order_order FOREIGN KEY (order_id) REFERENCES shawarma.order (order_id)
+    dish_entry_id INT,
+    order_id      INT,
+    CONSTRAINT dish_x_order_primary_key PRIMARY KEY (order_id, dish_entry_id),
+    CONSTRAINT dish_x_order_order FOREIGN KEY (order_id) REFERENCES shawarma.order (order_id),
+    CONSTRAINT dish_x_order_dish FOREIGN KEY (dish_entry_id) REFERENCES shawarma.dish (dish_entry_id)
 );
