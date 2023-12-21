@@ -1,3 +1,5 @@
+set search_path = shawarma, public;
+
 -- create schema
 DROP SCHEMA IF EXISTS shawarma CASCADE;
 CREATE SCHEMA shawarma;
@@ -29,9 +31,11 @@ CREATE TABLE shawarma.employee
     CONSTRAINT employee_phone_number CHECK (regexp_match(employee_phone_number,
                                                          '^(8|\+7)\s[0-9]{3}\s[0-9]{3}-[0-9]{2}-[0-9]{2}$') IS NOT NULL),
     CONSTRAINT employee_position CHECK (regexp_match(employee_position,
-                                                     '^(Кассир|Повар|Уборщик)$') IS NOT NULL),
+                                                     '^(Линейный повар|Повар заготовщик|Су-шеф|Шеф|Бренд-шеф|Шеф-кондитер|Официант|Уборщик|Кассир)$') IS NOT NULL),
     CONSTRAINT salary CHECK (salary > 0 IS NOT NULL)
 );
+
+
 
 -- create table product
 DROP TABLE IF EXISTS shawarma.product CASCADE;
@@ -41,6 +45,8 @@ CREATE TABLE shawarma.product
     product_name VARCHAR(100) NOT NULL,
     CONSTRAINT product_id PRIMARY KEY (product_id)
 );
+
+
 
 -- create table delivery
 DROP TABLE IF EXISTS shawarma.delivery CASCADE;
@@ -73,7 +79,7 @@ CREATE TABLE shawarma.dish
     dish_price      NUMERIC,
     valid_from_dttm TIMESTAMP    NOT NULL,
     valid_to_dttm   TIMESTAMP    NOT NULL,
-    CONSTRAINT dish_id PRIMARY KEY (dish_id),
+    CONSTRAINT dish_primary_key PRIMARY KEY (dish_id, valid_from_dttm),
     CONSTRAINT dish_price CHECK (dish.dish_price > 0 IS NOT NULL)
 );
 
