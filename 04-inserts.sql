@@ -56,13 +56,13 @@ values (20001, 'Сыр'),
        (20007, 'Картошка');
 
 
-insert into shawarma.product_x_delivery (product_id, delivery_id)
-values (20001, 10007),
-       (20002, 10007),
-       (20003, 10004),
-       (20005, 10004),
-       (20001, 10003),
-       (20007, 10005);
+insert into shawarma.product_x_delivery (product_id, delivery_id, quantity)
+values (20001, 10007, 2),
+       (20002, 10007, 1),
+       (20003, 10004, 10),
+       (20005, 10004, 1),
+       (20001, 10003, 5),
+       (20007, 10005, 3);
 
 
 insert into shawarma.dish(dish_id, dish_name, dish_price, valid_from_dttm, valid_to_dttm)
