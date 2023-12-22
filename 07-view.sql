@@ -38,8 +38,6 @@ select * from cafe_masked_phone;
 
 
 --(4) Посмотрим на список блюд, цены которых актуальны с заданного периода
-select * from shawarma.dish;
-
 create or replace view valid_dish as
 select dish_name, dish_price
 from shawarma.dish 
