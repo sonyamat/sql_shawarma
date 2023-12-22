@@ -16,21 +16,21 @@ order by sum(dish_price) desc;
 
 
 
--- (2) Создали view, в котором собрали работников заведений и то, какие они заказы делали в заданный период
-create or replace view the_best_employee1 as
-select employee_id, employee_name, order_id, payment_amount
-from employee
+-- (2) Создали view, в котором отсортировали стоимости заказов по убыванию и вывели работников, которые эти заказы делали
+create or replace view the_best_employee15 as
+select order_id, employee_name, "SUM" - discount_amount
+from (
+select distinct order_id, employee_name, discount_amount,
+string_agg(dish_name, ', ') over(partition by order_id) as "Total",
+sum(dish_price) over(partition by order_id) as "SUM"
+from shawarma.employee
 join shawarma.order using(employee_id)
-where order_dttm between '2001-01-01 00:00:00' and '2015-01-01 00:00:00';
+join shawarma.dish_x_order using (order_id)
+join shawarma.dish using (dish_entry_id)
+order by "SUM" desc) as payment_nodiscount;
 
 --Посмотрели, что получилось
-select * from the_best_employee1;
-
---Теперь отсортируем и выведем работников по прибыли, которую они принесли заведению, лучшему -- премия
-select employee_name, sum(payment_amount)
-from the_best_employee1
-group by employee_name
-order by sum(payment_amount) desc; 
+select * from the_best_employee15;
 
 
 
