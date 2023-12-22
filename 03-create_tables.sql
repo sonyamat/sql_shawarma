@@ -63,9 +63,11 @@ CREATE TABLE shawarma.product_x_delivery
 (
     product_id  INT,
     delivery_id INT,
+    quantity INT,
     CONSTRAINT product_x_delivery_primary_key PRIMARY KEY (product_id, delivery_id),
     CONSTRAINT product_x_delivery_product FOREIGN KEY (product_id) REFERENCES shawarma.product (product_id),
-    CONSTRAINT product_x_delivery_delivery FOREIGN KEY (delivery_id) REFERENCES shawarma.delivery (delivery_id)
+    CONSTRAINT product_x_delivery_delivery FOREIGN KEY (delivery_id) REFERENCES shawarma.delivery (delivery_id),
+    CONSTRAINT quantity CHECK (quantity > 0 IS NOT NULL)
 );
 
 -- create table dish
