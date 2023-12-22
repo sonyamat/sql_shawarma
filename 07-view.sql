@@ -18,12 +18,13 @@ select * from masked_employee_phone_view;
 
 
 
---(2) Хотим посмотреть заказы, без лишней информации
-create or replace view shawarma_order_view as 
-select payment_amount, payment_type, discount_amount
-from shawarma.order;
+--(2) Хотим посмотреть блюда, с актуальной стоимостью на данный момент, без лишней информации
+create or replace view shawarma_dish_view as 
+select dish_name, dish_price
+from shawarma.dish
+where valid_to_dttm = '9999-12-31 23:59:59';
 
-select * from shawarma_order_view;
+select * from shawarma_dish_view;
 
 
 
